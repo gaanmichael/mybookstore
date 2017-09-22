@@ -12,7 +12,7 @@ namespace MyBookstore.Controllers
         // GET: Publishers
         public ActionResult Index()
         {
-            return View();                  
+            return View();
         }
 
         // GET: Publishers/Details/5
