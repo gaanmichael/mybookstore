@@ -1,4 +1,6 @@
-﻿using MyBookstore.Models;
+﻿using CrystalDecisions.CrystalReports.Engine;
+using CrystalDecisions.Shared;
+using MyBookstore.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -32,7 +34,7 @@ namespace MyBookstore.Controllers
                             foreach (DataRow row in dt.Rows)
                             {
                                 var author = new AuthorsModels();
-                                author.ID = Convert.ToInt32 (row["authorID"].ToString());
+                                author.ID = Convert.ToInt32(row["authorID"].ToString());
                                 author.LastName = row["authorLN"].ToString();
                                 author.FirstName = row["authorFN"].ToString();
                                 author.Phone = row["authorPhone"].ToString();
@@ -47,7 +49,7 @@ namespace MyBookstore.Controllers
                 }
             }
 
-                return View(list);
+            return View(list);
         }
 
         // GET: Authors/Details/5
@@ -137,7 +139,7 @@ namespace MyBookstore.Controllers
                 }
             }
 
-                return View();
+            return View();
         }
 
         // POST: Authors/Edit/5
@@ -193,7 +195,7 @@ namespace MyBookstore.Controllers
                 }
             }
 
-                return View();
+            return View();
         }
 
         // POST: Authors/Delete/5
@@ -202,8 +204,6 @@ namespace MyBookstore.Controllers
         {
             try
             {
-                // TODO: Add delete logic here
-
                 return RedirectToAction("Index");
             }
             catch
@@ -211,5 +211,32 @@ namespace MyBookstore.Controllers
                 return View();
             }
         }
+
+
+        public ActionResult GenerateReport()
+        {
+            ReportDocument rd = new ReportDocument();
+            rd.Load(Server.MapPath("/Reports/rptAuthors.rpt"));
+            rd.SetDatabaseLogon("gaanm", "gaan1998", "TAFT-CL338", "mybookstore");
+            rd.ExportToHttpResponse(ExportFormatType.PortableDocFormat, System.Web.HttpContext.Current.Response, true, "Authors Report");
+            return View();
+        }
+
+        public ActionResult GenerateIndividualReport(int? id)
+        {
+            if (id == null)
+                return RedirectToAction("Index");
+
+            ReportDocument rd = new ReportDocument();
+            rd.Load(Server.MapPath("/Reports/rptAuthorindividual.rpt"));
+            rd.SetDatabaseLogon("gaanm", "gaan1998", "TAFT-CL338", "mybookstore");
+            rd.SetParameterValue("authorID", id);
+            rd.SetParameterValue("Username", "Michael Gaan");
+            rd.ExportToHttpResponse(ExportFormatType.PortableDocFormat, 
+                System.Web.HttpContext.Current.Response, true, "Authors #" + id.ToString() + "Report");
+            return View();
+        }
     }
 }
+                
+          
